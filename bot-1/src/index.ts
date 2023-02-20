@@ -1,4 +1,7 @@
 import { Kafka } from "kafkajs";
+import { executeStrategy } from "./services/strategy-execute";
+require("dotenv").config();
+
 const kafka = new Kafka({
   clientId: "my-consumer",
 
@@ -22,11 +25,14 @@ const run = async () => {
       partition: any;
       message: any;
     }) => {
-      console.log({
-        partition,
-        offset: message.offset,
-        value: JSON.parse(message.value),
-      });
+      // console.log({
+      //   partition,
+      //   offset: message.offset,
+      //   value: JSON.parse(message.value),
+      // });
+      console.log("Execute strategy");
+      //Pass the data to the main bot function
+      executeStrategy(JSON.parse(message.value));
     },
   });
 };
