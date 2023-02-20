@@ -1,45 +1,34 @@
-console.log("bot 1 welcomes!");
-console.log("elo");
-import Kafka, { KafkaConsumer } from "node-rdkafka";
-//send some data to kafka in intervals
+import { Kafka } from "kafkajs";
+const kafka = new Kafka({
+  clientId: "my-consumer",
 
-const consumer = new Kafka.KafkaConsumer(
-  { "group.id": "kafka", "metadata.broker.list": "localhost:9092" },
-  {}
-);
+  brokers: ["localhost:9092"],
+});
 
-// consumer.connect();
+const consumer = kafka.consumer({ groupId: "test-group" });
 
-// consumer
-//   .on("ready", () => {
-//     console.log("consumer ready...");
-//     consumer.subscribe(["test2"]);
-//     consumer.consume();
-//   })
-//   .on("data", (data: Kafka.Message) => {
-//     console.log("received message" + data.value);
-//   });
-// var stream = KafkaConsumer.createReadStream(globalConfig, topicConfig, {
-//   topics: ["test2"],
-// });
+const run = async () => {
+  // Producing
+  await consumer.connect();
+  await consumer.subscribe({ topic: "test3", fromBeginning: true });
 
-// stream.on("data", function (message) {
-//   console.log("Got message");
-//   console.log(message.value.toString());
-// });
-consumer.connect();
-
-consumer
-  .on("ready", function () {
-    consumer.subscribe(["test2"]);
-
-    // Consume from the librdtesting-01 topic. This is what determines
-    // the mode we are running in. By not specifying a callback (or specifying
-    // only a callback) we get messages as soon as they are available.
-    consumer.consume();
-  })
-  .on("data", function (data) {
-    // Output the actual message contents
-    console.log(data.value?.toString("utf8"));
-    console.log(data.offset);
+  await consumer.run({
+    eachMessage: async ({
+      topic,
+      partition,
+      message,
+    }: {
+      topic: any;
+      partition: any;
+      message: any;
+    }) => {
+      console.log({
+        partition,
+        offset: message.offset,
+        value: JSON.parse(message.value),
+      });
+    },
   });
+};
+
+run().catch(console.error);

@@ -1,19 +1,34 @@
-console.log("elo");
-import Kafka from "node-rdkafka";
-//send some data to kafka in intervals
+import { Kafka } from "kafkajs";
+const kafka = new Kafka({
+  clientId: "my-producer",
+  brokers: ["localhost:9092"],
+});
 
-const stream = Kafka.Producer.createWriteStream(
-  {
-    "metadata.broker.list": "localhost:9092",
-  },
-  {},
-  { topic: "test2" }
-);
+const producer = kafka.producer();
+const produceMessage = async () => {
+  try {
+    await producer.send({
+      topic: "test3",
+      messages: [
+        {
+          value: JSON.stringify({
+            index: "USDPLN",
+            price: Math.floor(Math.random() * 100),
+          }),
+        },
+      ],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+};
+const run = async () => {
+  // Producing
+  await producer.connect();
 
-function queuemessage() {
-  const result = stream.write(Buffer.from("hi"));
-  console.log(result);
-}
-setInterval(() => {
-  queuemessage();
-}, 3000);
+  setInterval(() => {
+    produceMessage();
+  }, 2000);
+};
+
+run().catch(console.error);
