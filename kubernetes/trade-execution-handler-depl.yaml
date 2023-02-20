@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trade-execution-handler-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trade-execution-handler
+  template:
+    metadata:
+      labels:
+        app: trade-execution-handler
+    spec:
+      containers:
+        - name: trade-execution-handler
+          image: wchbason/trade-execution-handler
+          env:
+            - name: XTB_ID
+              valueFrom:
+                secretKeyRef:
+                  name: xtb-id
+                  key: XTB_ID
+            - name: XTB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: xtb-password
+                  key: XTB_PASSWORD
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: trade-execution-handler-srv
+spec:
+  selector:
+    app: trade-execution-handler
+  ports:
+    - name: trade-execution-handler
+      protocol: TCP
+      port: 3010
+      targetPort: 3010
