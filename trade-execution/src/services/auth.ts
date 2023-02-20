@@ -1,5 +1,5 @@
 import WebSocket from "ws";
-import { sendChartRange } from "./sendChartRange";
+import { handleExecutionCalls } from "./handleExecutionCalls";
 
 require("dotenv").config();
 export const auth = () => {
@@ -22,7 +22,7 @@ export const auth = () => {
     if (packet.status == true && packet.streamSessionId) {
       console.log("auth", packet);
 
-      sendChartRange(socket);
+      handleExecutionCalls(socket);
     } else {
     }
   });

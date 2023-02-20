@@ -8,11 +8,14 @@ const kafka = new Kafka({
   brokers: ["localhost:9092"],
 });
 
-const consumer = kafka.consumer({ groupId: "test-group" });
+export const producer = kafka.producer();
+
+export const consumer = kafka.consumer({ groupId: "test-group" });
 
 const run = async () => {
   // Producing
   await consumer.connect();
+  await producer.connect();
   await consumer.subscribe({ topic: "test3", fromBeginning: true });
 
   await consumer.run({
@@ -25,11 +28,6 @@ const run = async () => {
       partition: any;
       message: any;
     }) => {
-      // console.log({
-      //   partition,
-      //   offset: message.offset,
-      //   value: JSON.parse(message.value),
-      // });
       console.log("Execute strategy");
       //Pass the data to the main bot function
       executeStrategy(JSON.parse(message.value));

@@ -18,7 +18,7 @@ const getChartRange = async (socket: WebSocket, producer: Producer) => {
           end: currentTimeStamp,
           period: 1,
           start: timeStamp15minBefore,
-          symbol: "EURUSD",
+          symbol: "BITCOIN",
           ticks: 15,
         },
       },
@@ -26,6 +26,7 @@ const getChartRange = async (socket: WebSocket, producer: Producer) => {
   );
   socket.addEventListener("message", ({ data }: { data: any }) => {
     const packet = JSON.parse(data);
+    packet.date = new Date();
     console.log(packet);
 
     produceMessage(producer, packet);
@@ -42,5 +43,5 @@ export const sendChartRange = async (socket: WebSocket) => {
 
   setInterval(async () => {
     getChartRange(socket, producer);
-  }, 60000);
+  }, 30000);
 };

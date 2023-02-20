@@ -17,6 +17,12 @@ export const Rsi = (data: any) => {
   const averageLoss = sumOfLosses / totalData;
   const RS = averageGain / averageLoss;
   const RSI = 100 - 100 / (1 + RS);
-  console.log("RSI", RSI);
-  return RSI;
+  console.log("RSI", RSI, "on date:", new Date());
+
+  return {
+    rsiIndex: RSI,
+    lastPrice:
+      data.returnData.rateInfos[totalData - 1].open +
+      data.returnData.rateInfos[totalData - 1].close,
+  };
 };

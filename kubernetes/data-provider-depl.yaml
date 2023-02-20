@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data-provider-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: data-provider
+  template:
+    metadata:
+      labels:
+        app: data-provider
+    spec:
+      containers:
+        - name: data-provider
+          image: wchbason/data-provider
+          env:
+            - name: XTB_ID
+              valueFrom:
+                secretKeyRef:
+                  name: xtb-id
+                  key: XTB_ID
+            - name: XTB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: xtb-password
+                  key: XTB_PASSWORD
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: data-provider-srv
+spec:
+  selector:
+    app: data-provider
+  ports:
+    - name: data-provider
+      protocol: TCP
+      port: 3009
+      targetPort: 3009

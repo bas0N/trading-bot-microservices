@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bot-1-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bot-1
+  template:
+    metadata:
+      labels:
+        app: bot-1
+    spec:
+      containers:
+        - name: bot-1
+          image: wchbason/bot-1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bot-1-srv
+spec:
+  selector:
+    app: bot-1
+  ports:
+    - name: bot-1
+      protocol: TCP
+      port: 3009
+      targetPort: 3009
