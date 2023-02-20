@@ -27,7 +27,9 @@ const getChartRange = async (socket: WebSocket, producer: Producer) => {
   socket.addEventListener("message", ({ data }: { data: any }) => {
     const packet = JSON.parse(data);
     console.log(packet);
+
     produceMessage(producer, packet);
+    socket.removeAllListeners();
   });
 };
 export const sendChartRange = async (socket: WebSocket) => {
@@ -36,7 +38,9 @@ export const sendChartRange = async (socket: WebSocket) => {
   const producer = await connectClient();
 
   //send messages in intervals
+  getChartRange(socket, producer);
+
   setInterval(async () => {
     getChartRange(socket, producer);
-  }, 6000);
+  }, 60000);
 };
