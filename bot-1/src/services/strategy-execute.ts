@@ -1,17 +1,21 @@
 import { Rsi } from "../utils/RSI";
 import { producer } from "../index";
 export const executeStrategy = async (data: any) => {
-  producer;
+  if (data.returnData) {
+  }
+
   const { rsiIndex, lastPrice }: { rsiIndex: number; lastPrice: number } =
     Rsi(data);
-  if (rsiIndex > 50) {
-    //download price data
-    //download balance
-    //execute buy operation
-    console.log("RSI OVER 70");
-
+  if (rsiIndex > 70) {
     try {
-      const disposition = { price: lastPrice, type: "bullish (RSI>70)" };
+      const disposition = {
+        price: lastPrice,
+        type: "SHORT",
+        description: "bullish (RSI>70)",
+        timestamp: new Date(),
+        rsiIndex,
+      };
+
       await producer.send({
         topic: "execute-position",
         messages: [
@@ -23,12 +27,14 @@ export const executeStrategy = async (data: any) => {
     } catch (e) {
       console.log(e);
     }
-  } else if (rsiIndex < 50) {
-    //download price data
-    //download balance
-    //execute sell operation
-    const disposition = { price: lastPrice, type: "bearish (RSI>70)" };
-    console.log("RSI UNDER 30");
+  } else if (rsiIndex < 30) {
+    const disposition = {
+      price: lastPrice,
+      type: "LONG",
+      description: "bearish (RSI<30)",
+      timestamp: new Date(),
+      rsiIndex,
+    };
     try {
       await producer.send({
         topic: "execute-position",

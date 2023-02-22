@@ -8,6 +8,8 @@ metadata:
 spec:
   ports:
     - port: 9092
+      targetPort: 9092
+  type: ClusterIP
   selector:
     app: kafka-broker
 ---

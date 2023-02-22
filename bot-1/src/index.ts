@@ -10,14 +10,15 @@ const kafka = new Kafka({
 
 export const producer = kafka.producer();
 
-export const consumer = kafka.consumer({ groupId: "test-group" });
+export const consumer = kafka.consumer({ groupId: "test-group2" });
 
 const run = async () => {
-  // Producing
+  // Connecting producer and consumer
   await consumer.connect();
   await producer.connect();
   await consumer.subscribe({ topic: "test3", fromBeginning: true });
 
+  //Waiting for kafka events
   await consumer.run({
     eachMessage: async ({
       topic,
